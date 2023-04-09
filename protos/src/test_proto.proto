@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option go_package = ".;service";
+
+message TestProtoMessage{
+  string name = 1;
+  int64 id = 2;
+  repeated float numbers = 3;
+}
+
+service AnyService {
+  rpc Test(TestProtoMessage) returns (TestProtoMessage) {}
+}

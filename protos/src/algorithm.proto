@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+option go_package = ".;service";
+
+message UserData  {
+  uint32 id = 1;
+}
+
+message TaskData  {
+  uint32 id = 1;
+  repeated uint32 relativeDeviceIds = 2;
+  repeated uint32 preTaskIds = 3;
+  repeated uint32 subTaskIds = 4;
+}
+
+message DeviceData  {
+  uint32 id = 1;
+  repeated uint32 relativeTaskIds = 2;
+}
+
+
+message ProcessFlowRequestData {
+  UserData userData = 1;
+  DeviceData deviceData = 2;
+  TaskData taskData = 3;
+}
+
+message ProcessFlowResponseData {
+  UserData userData = 1;
+  DeviceData deviceData = 2;
+  TaskData taskData = 3;
+}
+
+message ProcessFlowRequest {
+  ProcessFlowRequestData data = 1;
+}
+
+message ProcessFlowResponse {
+  ProcessFlowResponseData data = 1;
+}
+
+service AlgorithmService {
+  rpc Test(ProcessFlowRequest) returns (ProcessFlowResponse) {}
+  rpc Proc(ProcessFlowRequest) returns (ProcessFlowResponse) {}
+}
