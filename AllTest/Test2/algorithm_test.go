@@ -1,6 +1,19 @@
-package main
+package Test2
 
-import "time"
+import (
+	"fmt"
+
+	"testing"
+	"time"
+)
+
+type TaskFlow struct {
+	Step      string
+	Device    Device
+	User      User
+	StartTime int
+	EndTime   int
+}
 
 type Result struct {
 	Success bool   `json:"success"`
@@ -92,4 +105,57 @@ type Notification struct {
 	Context                string
 	Read                   bool
 	NotificationArriveTime time.Time
+}
+
+type TaskFlowPlan struct {
+	TaskFlows []TaskFlow
+}
+
+func (tfp *TaskFlowPlan) AddTaskFlow(taskFlow TaskFlow) {
+	tfp.TaskFlows = append(tfp.TaskFlows, taskFlow)
+}
+
+func TestAlgorithm(test *testing.T) {
+	task1 := Task{
+		TaskType:      "Shopping",
+		Urgency:       3,
+		Importance:    2,
+		EstimatedTime: 2,
+		AssignedUser:  nil,
+	}
+
+	device1 := Device{
+		DeviceType:    "Smart Fridge",
+		Location:      "Kitchen",
+		Function:      "Shopping List",
+		AvailableTime: 24,
+		InUse:         false,
+	}
+
+	user1 := User{
+		Name:         "John",
+		Habits:       "Grocery shopping on Sundays",
+		Abilities:    "Cooking",
+		Availability: 4,
+	}
+
+	taskFlowPlan := TaskFlowPlan{TaskFlows: []TaskFlow{}}
+
+	taskFlow1 := TaskFlow{
+		Step:      "Add items to shopping list",
+		Device:    device1,
+		User:      user1,
+		StartTime: 12,
+		EndTime:   13,
+	}
+
+	taskFlowPlan.AddTaskFlow(taskFlow1)
+
+	// 添加更多的任务流程
+
+	fmt.Println(taskFlowPlan.TaskFlows, task1)
+}
+
+func TestCooperation(test *testing.T) {
+	fmt.Println("")
 }

@@ -8,5 +8,8 @@ import (
 func TestAny(t *testing.T) {
 	println("Hello")
 	log.Printf("")
-	log.Fatal("")
+}
+
+func TestSADADA(t *testing.T) {
+
 }

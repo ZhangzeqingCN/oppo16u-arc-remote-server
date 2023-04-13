@@ -9,7 +9,7 @@ create table users
     id       integer
         primary key
         constraint fk_notifications_receiver
-            references main.notifications,
+            references notifications,
     name     text,
     password text,
     email    text
@@ -27,14 +27,14 @@ create table tasks
     name           text,
     user_id        integer -- 任务的所有者
         constraint fk_tasks_user
-            references main.users
+            references users
             on update cascade on delete set null,
     pre_task_of_id integer -- 作为谁的前置任务
         constraint fk_tasks_pre_tasks
-            references main.tasks,
+            references tasks,
     sub_task_of_id integer -- 作为谁的子任务
         constraint fk_tasks_sub_tasks
-            references main.tasks
+            references tasks
 );
 ```
 
@@ -42,9 +42,12 @@ create table tasks
 ```sqlite
 create table devices
 (
-    id   integer
+    id                 integer
         primary key,
-    name text
+    name               text,
+    hey_things_sdk_sim text,
+    exclusive          numeric,
+    occupied           numeric
 );
 ```
 
@@ -56,10 +59,10 @@ create table device_task_relations
         primary key,
     device_id integer
         constraint fk_device_task_relations_device
-            references main.devices,
+            references devices,
     task_id   integer
         constraint fk_device_task_relations_task
-            references main.tasks
+            references tasks
 );
 ```
 
@@ -71,10 +74,10 @@ create table user_relations
         primary key,
     user1_id integer
         constraint fk_user_relations_user1
-            references main.users,
+            references users,
     user2_id integer
         constraint fk_user_relations_user2
-            references main.users,
+            references users,
     tag      text
 );
 ```
@@ -88,13 +91,13 @@ create table notifications
     content        text,
     receiver_id    integer
         constraint fk_notifications_receiver
-            references main.users,
+            references users,
     from_user_id   integer
         constraint fk_notifications_from_user
-            references main.users,
+            references users,
     from_device_id integer
         constraint fk_notifications_from_device
-            references main.devices,
+            references devices,
     context        text
 );
 ```
@@ -167,3 +170,40 @@ type Notification struct {
 	Context      string
 }
 ```
+
+```mermaid
+graph LR
+    
+    subgraph MainServer ["Golang"]
+        subgraph Persistence
+            MainServerPersistence --- |Gorm| Database
+        end
+        subgraph NetServer
+            MainServerNet --- |Gin| Api
+        end
+    end
+    
+    subgraph AlgorithmServer ["Rust"]
+        subgraph Axum 
+            Algorithm
+        end
+    end
+
+    
+    
+    subgraph App
+        subgraph Flutter
+            subgraph Getx
+            end
+        end
+    end
+
+    subgraph Device
+        HeyThingsSDK("Hey Things SDK")
+    end
+    
+    MainServer --- |MQTT+Hey Things SDK| App
+    MainServer --- |GraphQL+Restful| Device
+    MainServer --- |gRPC| AlgorithmServer
+```
+ 
